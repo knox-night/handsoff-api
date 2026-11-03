@@ -1,0 +1,6 @@
+TASK: (what I asked you to do)
+FILE: (which file the error is in)
+EXACT ERROR: (paste the full error text, don't summarize)
+WHAT I EXPECTED: (what should have happened)
+WHAT ACTUALLY HAPPENED: (what I see)
+ALREADY TRIED: (anything I tried that didn't work)
