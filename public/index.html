@@ -228,6 +228,19 @@ h1{font-size:clamp(2.35rem,6vw,3.8rem);letter-spacing:-1.6px;background:linear-g
 @media (max-width:560px){.hero-widgets{grid-template-columns:1fr;max-width:280px}.hero-widget{padding:.7rem .85rem}.hero-orbit{opacity:.55}.hero-ring,.hero-cube{opacity:.45}}
 @media (prefers-reduced-motion:reduce){.telemetry::after,.finding.show,#results.visible{animation:none}}
 .feedback-card{margin-top:1.5rem}.feedback-form{display:grid;gap:1rem}.feedback-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.feedback-form label{display:grid;gap:.4rem;font-size:.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}.feedback-form input,.feedback-form textarea,.feedback-form select{width:100%;border:1px solid var(--border);border-radius:9px;background:rgba(15,23,42,.7);color:var(--text);padding:.75rem;font:inherit}.feedback-form textarea{min-height:100px;resize:vertical}.feedback-status{font-size:.8rem;color:#86efac;min-height:1.2em}@media(max-width:560px){.feedback-grid{grid-template-columns:1fr}}
+
+/* Final visual polish */
+#bg{opacity:.55}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(148,163,184,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,.035) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.7),transparent 72%)}
+.logo-cube{font-size:.62rem;letter-spacing:.08em}
+.eyebrow{box-shadow:0 0 0 5px rgba(56,189,248,.025),0 8px 28px rgba(2,132,199,.08)}
+.eyebrow-dot{width:6px;height:6px;border-radius:50%;background:#38bdf8;box-shadow:0 0 10px #38bdf8}
+.card,.telemetry{box-shadow:0 24px 70px rgba(0,0,0,.16)}
+.repo-tab-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:rgba(56,189,248,.1);border:1px solid rgba(125,211,252,.18);color:#bae6fd;font-size:.67rem;font-weight:800;letter-spacing:.08em}
+.repo-tab.active .repo-tab-icon{background:linear-gradient(135deg,rgba(56,189,248,.22),rgba(99,102,241,.18));border-color:rgba(125,211,252,.4);box-shadow:0 0 18px rgba(56,189,248,.12)}
+.check-icon{font-size:.58rem;font-weight:800;letter-spacing:.06em;color:#bae6fd;border:1px solid rgba(125,211,252,.22);border-radius:4px;padding:2px 4px;line-height:1}
+.check-pill:has(input:checked) .check-icon{background:rgba(56,189,248,.12);border-color:rgba(125,211,252,.45)}
+.feedback-card{background:rgba(15,23,42,.64)}
 </style>
 </head>
 <body>
@@ -237,7 +250,7 @@ h1{font-size:clamp(2.35rem,6vw,3.8rem);letter-spacing:-1.6px;background:linear-g
 
 <nav>
   <a class="logo" href="/">
-    <div class="logo-cube">🛡️</div>
+    <div class="logo-cube" aria-hidden="true">HO</div>
     <span class="logo-name">Hands-Off</span>
     <span class="beta-pill">Beta</span>
   </a>
@@ -263,7 +276,7 @@ h1{font-size:clamp(2.35rem,6vw,3.8rem);letter-spacing:-1.6px;background:linear-g
   <div class="hero-orbit"></div>
   <div class="hero-ring"></div>
   <div class="hero-cube"></div>
-  <div class="eyebrow">● Hands-Off / local prototype</div>
+  <div class="eyebrow"><span class="eyebrow-dot"></span> Hands-Off / launch console</div>
   <h1>Ship with<br>fewer unknowns.</h1>
   <p class="hero-sub">Hands-Off turns your AI-built project into a clear launch-readiness signal—without running its code or installing its dependencies.</p>
   <div class="hero-widgets">
@@ -300,12 +313,12 @@ h1{font-size:clamp(2.35rem,6vw,3.8rem);letter-spacing:-1.6px;background:linear-g
 
       <div class="repo-tabs" id="repoTabs">
         <button class="repo-tab active" data-repo="harmless">
-          <span class="repo-tab-icon">◈</span>
+          <span class="repo-tab-icon" aria-hidden="true">01</span>
           <div class="repo-tab-name">harmless</div>
           <div class="repo-tab-desc">Clean baseline · no issues expected</div>
         </button>
         <button class="repo-tab" data-repo="missing-lockfile">
-          <span class="repo-tab-icon">△</span>
+          <span class="repo-tab-icon" aria-hidden="true">02</span>
           <div class="repo-tab-name">missing-lockfile</div>
           <div class="repo-tab-desc">Risk scenario · one finding</div>
         </button>
@@ -314,8 +327,8 @@ h1{font-size:clamp(2.35rem,6vw,3.8rem);letter-spacing:-1.6px;background:linear-g
       <div class="check-label">Inspection modules</div>
       <div class="section-helper">Choose one or both. Results include evidence and a practical next step.</div>
       <div class="checks">
-        <label class="check-pill"><input type="checkbox" value="secret_patterns" checked><span class="pip"></span>🔑 Secret patterns</label>
-        <label class="check-pill"><input type="checkbox" value="dependency_audit" checked><span class="pip"></span>📦 Dependency audit</label>
+        <label class="check-pill"><input type="checkbox" value="secret_patterns" checked><span class="pip"></span><span class="check-icon" aria-hidden="true">KEY</span>Secret patterns</label>
+        <label class="check-pill"><input type="checkbox" value="dependency_audit" checked><span class="pip"></span><span class="check-icon" aria-hidden="true">PKG</span>Dependency audit</label>
       </div>
 
       <button class="btn" id="scanBtn" onclick="runScan()">
