@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: handsoff-api
+    runtime: node
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HANDSOFF_API_KEY
+        generateValue: true
+      - key: HANDSOFF_TOKEN_SECRET
+        generateValue: true
+      - key: GITHUB_APP_ID
+        sync: false
+      - key: GITHUB_APP_INSTALLATION_ID
+        sync: false
+      - key: GITHUB_APP_PRIVATE_KEY
+        sync: false
