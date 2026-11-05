@@ -372,6 +372,14 @@ document.querySelectorAll('.nav-menu details').forEach(menu => {
     });
   });
 });
+document.addEventListener('click', event => {
+  if (event.target.closest('.nav-menu')) return;
+  document.querySelectorAll('.nav-menu details[open]').forEach(menu => { menu.open = false; });
+});
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Escape') return;
+  document.querySelectorAll('.nav-menu details[open]').forEach(menu => { menu.open = false; });
+});
 
 /* ═══════════════════════════════════════════════
    Self-contained 3D-style launch-readiness field
