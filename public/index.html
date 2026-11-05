@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Hands-Off — Launch Readiness Scanner</title>
-<script src="https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -344,76 +343,66 @@ h1{font-size:clamp(2.35rem,6vw,3.8rem);letter-spacing:-1.6px;background:linear-g
 
 <script>
 /* ═══════════════════════════════════════════════
-   THREE.JS — Interactive launch-readiness field
+   Self-contained 3D-style launch-readiness field
 ═══════════════════════════════════════════════ */
 (function () {
-  if (!window.THREE) return;
   const canvas = document.getElementById('bg');
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.6));
-  renderer.setSize(innerWidth, innerHeight);
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, .1, 100);
-  camera.position.set(0, 0, 24);
-
-  const field = new THREE.Group();
-  scene.add(field);
-  const shardGeometry = new THREE.IcosahedronGeometry(1, 0);
-  const shardMaterials = [
-    new THREE.MeshBasicMaterial({ color: 0x7c3aed, wireframe: true, transparent: true, opacity: .28 }),
-    new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true, transparent: true, opacity: .2 }),
-    new THREE.MeshBasicMaterial({ color: 0xa78bfa, wireframe: true, transparent: true, opacity: .16 })
-  ];
-  const shards = Array.from({ length: 18 }, (_, i) => {
-    const shard = new THREE.Mesh(shardGeometry, shardMaterials[i % shardMaterials.length]);
-    const depth = 4 + Math.random() * 15;
-    shard.position.set((Math.random() - .5) * 26, (Math.random() - .5) * 16, -depth);
-    const scale = .35 + Math.random() * 1.5;
-    shard.scale.setScalar(scale);
-    shard.rotation.set(Math.random() * 3, Math.random() * 3, Math.random() * 3);
-    shard.userData = { speed: .001 + Math.random() * .004, drift: Math.random() * Math.PI * 2 };
-    field.add(shard);
-    return shard;
-  });
-
-  const grid = new THREE.GridHelper(42, 24, 0x7c3aed, 0x1e1b4b);
-  grid.rotation.x = Math.PI / 2.35;
-  grid.position.set(0, -6, -12);
-  grid.material.transparent = true;
-  grid.material.opacity = .18;
-  field.add(grid);
-
-  const points = new THREE.Points(
-    new THREE.SphereGeometry(12, 24, 16),
-    new THREE.PointsMaterial({ color: 0x8b5cf6, size: .035, transparent: true, opacity: .5 })
-  );
-  field.add(points);
-
-  let mx = 0, my = 0;
+  const context = canvas.getContext('2d');
+  if (!context) return;
+  let width = 0, height = 0, mx = 0, my = 0;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  document.addEventListener('mousemove', e => { mx = (e.clientX / innerWidth - .5) * 2; my = (e.clientY / innerHeight - .5) * 2; });
-  window.addEventListener('resize', () => {
-    camera.aspect = innerWidth / innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(innerWidth, innerHeight);
-  });
+  const shapes = Array.from({ length: 16 }, () => ({
+    x: (Math.random() - .5) * 1.8, y: (Math.random() - .5) * 1.2, z: Math.random(),
+    size: .025 + Math.random() * .08, spin: Math.random() * Math.PI, speed: .001 + Math.random() * .002
+  }));
+  const resize = () => {
+    width = canvas.width = innerWidth * devicePixelRatio;
+    height = canvas.height = innerHeight * devicePixelRatio;
+    canvas.style.width = `${innerWidth}px`;
+    canvas.style.height = `${innerHeight}px`;
+    context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    width = innerWidth; height = innerHeight;
+  };
+  resize();
+  document.addEventListener('mousemove', e => { mx = e.clientX / width - .5; my = e.clientY / height - .5; });
+  window.addEventListener('resize', resize);
 
   function animate() {
     if (!reducedMotion) requestAnimationFrame(animate);
-    const t = performance.now();
-    shards.forEach((shard, i) => {
-      shard.rotation.x += shard.userData.speed;
-      shard.rotation.y += shard.userData.speed * 1.4;
-      shard.position.y += Math.sin(t * .0004 + shard.userData.drift) * .0015;
+    const time = performance.now();
+    context.clearRect(0, 0, width, height);
+    const horizon = height * .53 + my * 35;
+    context.strokeStyle = 'rgba(124,58,237,.18)';
+    context.lineWidth = 1;
+    for (let i = -12; i <= 12; i++) {
+      context.beginPath();
+      context.moveTo(width / 2 + i * width * .06 + mx * 80, horizon);
+      context.lineTo(width / 2 + i * width * .45 + mx * 160, height);
+      context.stroke();
+    }
+    for (let i = 1; i < 10; i++) {
+      const y = horizon + Math.pow(i / 10, 2) * height * .55;
+      context.beginPath();
+      context.moveTo(0, y);
+      context.lineTo(width, y);
+      context.stroke();
+    }
+    shapes.forEach(shape => {
+      if (!reducedMotion) shape.z = (shape.z + shape.speed) % 1;
+      const depth = .25 + shape.z * .75;
+      const x = width / 2 + (shape.x + mx * .12) * width * depth;
+      const y = height * .4 + (shape.y + my * .08) * height * depth;
+      const size = shape.size * Math.min(width, height) * (1.3 - shape.z);
+      shape.spin += reducedMotion ? 0 : .01;
+      context.save();
+      context.translate(x, y);
+      context.rotate(shape.spin);
+      context.strokeStyle = `rgba(125,211,252,${.1 + (1 - shape.z) * .35})`;
+      context.beginPath();
+      context.moveTo(0, -size); context.lineTo(size, 0); context.lineTo(0, size);
+      context.lineTo(-size, 0); context.closePath(); context.stroke();
+      context.restore();
     });
-    points.rotation.y += reducedMotion ? 0 : .00035;
-    grid.rotation.z += reducedMotion ? 0 : .00015;
-    camera.position.x += (mx * 2.2 - camera.position.x) * .025;
-    camera.position.y += (-my * 1.2 - camera.position.y) * .025;
-    camera.lookAt(0, 0, -7);
-
-    renderer.render(scene, camera);
   }
   animate();
 })();
