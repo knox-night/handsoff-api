@@ -76,6 +76,37 @@ app.get('/api/v1/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.post('/api/v1/feedback', (req, res) => {
+  const { message, email, rating, category } = req.body || {};
+  if (typeof message !== 'string' || message.trim().length < 1 || message.length > 2000) {
+    return errorResponse(res, 400, 'INVALID_REQUEST', 'Feedback message must be between 1 and 2000 characters.');
+  }
+  if (email !== undefined && (typeof email !== 'string' || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+    return errorResponse(res, 400, 'INVALID_REQUEST', 'A valid email address is required when provided.');
+  }
+  if (rating !== undefined && (!Number.isInteger(rating) || rating < 1 || rating > 5)) {
+    return errorResponse(res, 400, 'INVALID_REQUEST', 'Rating must be an integer from 1 to 5.');
+  }
+  if (category !== undefined && (typeof category !== 'string' || category.length > 50)) {
+    return errorResponse(res, 400, 'INVALID_REQUEST', 'Feedback category is invalid.');
+  }
+
+  const feedback = {
+    feedback_id: crypto.randomUUID(),
+    message: message.trim(),
+    ...(email ? { email } : {}),
+    ...(rating !== undefined ? { rating } : {}),
+    ...(category ? { category } : {}),
+    created_at: new Date().toISOString()
+  };
+  try {
+    scanStore.saveFeedback(feedback);
+  } catch {
+    return errorResponse(res, 500, 'INTERNAL_ERROR', 'The feedback could not be saved.');
+  }
+  res.status(201).json({ feedback_id: feedback.feedback_id, status: 'received' });
+});
+
 app.post('/api/v1/auth/token', (req, res) => {
   if (req.get('x-api-key') !== apiKey) {
     return errorResponse(res, 401, 'UNAUTHORIZED', 'A valid API key is required.');

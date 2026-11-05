@@ -14,7 +14,11 @@ function createScanStore(dbPath = process.env.SCANS_STORE_PATH || path.join(__di
       owner_id TEXT,
       status TEXT NOT NULL,
       data TEXT NOT NULL
-    )
+    );
+    CREATE TABLE IF NOT EXISTS feedback (
+      feedback_id TEXT PRIMARY KEY,
+      data TEXT NOT NULL
+    );
   `);
 
   const stmtGet = db.prepare('SELECT data FROM scans WHERE scan_id = ?');
@@ -22,6 +26,7 @@ function createScanStore(dbPath = process.env.SCANS_STORE_PATH || path.join(__di
   const stmtUpsert = db.prepare(
     'INSERT INTO scans (scan_id, owner_id, status, data) VALUES (?, ?, ?, ?) ON CONFLICT(scan_id) DO UPDATE SET owner_id=excluded.owner_id, status=excluded.status, data=excluded.data'
   );
+  const stmtFeedback = db.prepare('INSERT INTO feedback (feedback_id, data) VALUES (?, ?)');
 
   return {
     get(scanId) {
@@ -33,6 +38,9 @@ function createScanStore(dbPath = process.env.SCANS_STORE_PATH || path.join(__di
     },
     countByOwner(ownerId) {
       return stmtCountByOwner.get(ownerId).n;
+    },
+    saveFeedback(feedback) {
+      stmtFeedback.run(feedback.feedback_id, JSON.stringify(feedback));
     }
   };
 }

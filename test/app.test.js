@@ -40,6 +40,25 @@ test('health endpoint is public', async () => {
   assert.deepEqual(await response.json(), { status: 'ok' });
 });
 
+test('accepts valid feedback without authentication', async () => {
+  const response = await fetch(`${baseUrl}/api/v1/feedback`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ message: 'The scan was easy to understand.', rating: 5, category: 'Usability' })
+  });
+  assert.equal(response.status, 201);
+  assert.equal((await response.json()).status, 'received');
+});
+
+test('rejects invalid feedback', async () => {
+  const response = await fetch(`${baseUrl}/api/v1/feedback`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ message: '', rating: 6 })
+  });
+  assert.equal(response.status, 400);
+});
+
 test('scan request requires authentication', async () => {
   const response = await fetch(`${baseUrl}/api/v1/scans`, {
     method: 'POST',

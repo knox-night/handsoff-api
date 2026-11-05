@@ -217,6 +217,7 @@ h1{font-size:clamp(2.35rem,6vw,3.8rem);letter-spacing:-1.6px;background:linear-g
 @media (max-width:780px){.scan-layout{grid-template-columns:1fr}.telemetry{min-height:270px}.dashboard-intro{align-items:flex-start;flex-direction:column;gap:.5rem}.dashboard-note{text-align:left}.hero-orbit{right:-100px;top:18%}.hero-ring{left:-70px}.hero-cube{left:6%}}
 @media (max-width:560px){.hero-widgets{grid-template-columns:1fr;max-width:280px}.hero-widget{padding:.7rem .85rem}.hero-orbit{opacity:.55}.hero-ring,.hero-cube{opacity:.45}}
 @media (prefers-reduced-motion:reduce){.telemetry::after,.finding.show,#results.visible{animation:none}}
+.feedback-card{margin-top:1.5rem}.feedback-form{display:grid;gap:1rem}.feedback-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.feedback-form label{display:grid;gap:.4rem;font-size:.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}.feedback-form input,.feedback-form textarea,.feedback-form select{width:100%;border:1px solid var(--border);border-radius:9px;background:rgba(15,23,42,.7);color:var(--text);padding:.75rem;font:inherit}.feedback-form textarea{min-height:100px;resize:vertical}.feedback-status{font-size:.8rem;color:#86efac;min-height:1.2em}@media(max-width:560px){.feedback-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -315,6 +316,30 @@ h1{font-size:clamp(2.35rem,6vw,3.8rem);letter-spacing:-1.6px;background:linear-g
   </div>
 
   <div id="results"></div>
+  <section class="card feedback-card" id="feedback">
+    <div class="card-label">Share feedback <span style="font-weight:400;text-transform:none;letter-spacing:0">Help improve Hands-Off.</span></div>
+    <form class="feedback-form" onsubmit="submitFeedback(event)">
+      <div class="feedback-grid">
+        <label>Rating
+          <select name="rating">
+            <option value="">Choose a rating</option><option value="5">5 — Excellent</option><option value="4">4 — Good</option>
+            <option value="3">3 — Okay</option><option value="2">2 — Needs work</option><option value="1">1 — Poor</option>
+          </select>
+        </label>
+        <label>Topic
+          <select name="category"><option value="">Choose a topic</option><option>Bug</option><option>Feature request</option><option>Usability</option><option>Other</option></select>
+        </label>
+      </div>
+      <label>Your feedback <textarea name="message" maxlength="2000" required placeholder="What should we improve?"></textarea></label>
+      <label>Email (optional) <input name="email" type="email" maxlength="254" placeholder="you@example.com"></label>
+      <button class="btn" type="submit"><span>Send feedback <b>→</b></span></button>
+      <div class="feedback-status" id="feedbackStatus" aria-live="polite"></div>
+    </form>
+  </section>
+  <footer style="padding:1rem 0 3rem;color:#64748b;font-size:.75rem;text-align:center">
+    <a href="/privacy.html" style="color:#94a3b8">Privacy Policy</a> ·
+    <a href="/terms.html" style="color:#94a3b8">Terms of Service</a>
+  </footer>
 </div>
 
 <script>
@@ -582,6 +607,26 @@ function renderReport(report) {
 
 function esc(s) {
   return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function submitFeedback(event) {
+  event.preventDefault();
+  const form = event.target;
+  const status = document.getElementById('feedbackStatus');
+  const data = Object.fromEntries(new FormData(form));
+  if (data.rating) data.rating = Number(data.rating);
+  for (const key of ['rating', 'category', 'email']) if (!data[key]) delete data[key];
+  status.textContent = 'Sending…';
+  const response = await fetch('/api/v1/feedback', {
+    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data)
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    status.textContent = body.error?.message || 'Feedback could not be sent.';
+    return;
+  }
+  form.reset();
+  status.textContent = 'Thanks — your feedback was received.';
 }
 </script>
 </body>
