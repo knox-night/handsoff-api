@@ -26,6 +26,17 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .logo-name{background:linear-gradient(135deg,#fff 0%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .beta-pill{font-size:.62rem;font-weight:700;background:rgba(124,58,237,.15);color:var(--accent2);border:1px solid rgba(124,58,237,.3);padding:2px 8px;border-radius:20px;letter-spacing:.06em;-webkit-text-fill-color:var(--accent2)}
 .nav-right{display:flex;align-items:center;gap:8px}
+.nav-menu{display:flex;align-items:center;gap:.45rem;margin-left:auto;margin-right:1rem}
+.nav-menu details{position:relative}
+.nav-menu summary{list-style:none;cursor:pointer;color:#94a3b8;font-size:.78rem;padding:.45rem .65rem;border-radius:8px}
+.nav-menu summary::-webkit-details-marker{display:none}
+.nav-menu summary:hover,.nav-menu details[open] summary{background:rgba(124,58,237,.12);color:#e9d5ff}
+.menu-panel{position:absolute;right:0;top:2.4rem;min-width:190px;padding:.45rem;background:rgba(15,23,42,.96);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(0,0,0,.35);z-index:110}
+.menu-panel a{display:block;color:#cbd5e1;text-decoration:none;padding:.6rem .7rem;border-radius:7px;font-size:.78rem}
+.menu-panel a:hover{background:rgba(124,58,237,.16);color:#fff}
+.report-tools{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem}
+.report-tools label{font-size:.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.report-tools select{margin-left:.5rem;border:1px solid var(--border);border-radius:7px;background:#111827;color:var(--text);padding:.45rem;font:inherit}
 .dot{width:8px;height:8px;border-radius:50%;background:#1f2937;transition:all .4s}
 .dot.ok{background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse-dot 2s infinite}
 .dot-label{font-size:.78rem;color:var(--muted)}
@@ -213,7 +224,7 @@ h1{font-size:clamp(2.35rem,6vw,3.8rem);letter-spacing:-1.6px;background:linear-g
 .section-helper{font-size:.75rem;color:var(--muted);margin:-.45rem 0 1rem}
 .button-meta{display:flex;justify-content:space-between;align-items:center;margin-top:.7rem;color:#64748b;font-size:.68rem}
 .button-meta span:first-child::before{content:'●';color:#22c55e;margin-right:.35rem}
-@media (max-width:780px){.scan-layout{grid-template-columns:1fr}.telemetry{min-height:270px}.dashboard-intro{align-items:flex-start;flex-direction:column;gap:.5rem}.dashboard-note{text-align:left}.hero-orbit{right:-100px;top:18%}.hero-ring{left:-70px}.hero-cube{left:6%}}
+@media (max-width:780px){.scan-layout{grid-template-columns:1fr}.telemetry{min-height:270px}.dashboard-intro{align-items:flex-start;flex-direction:column;gap:.5rem}.dashboard-note{text-align:left}.hero-orbit{right:-100px;top:18%}.hero-ring{left:-70px}.hero-cube{left:6%}.nav-menu{margin-right:.25rem}.nav-menu summary{font-size:0}.nav-menu summary::after{content:'☰';font-size:1rem}}
 @media (max-width:560px){.hero-widgets{grid-template-columns:1fr;max-width:280px}.hero-widget{padding:.7rem .85rem}.hero-orbit{opacity:.55}.hero-ring,.hero-cube{opacity:.45}}
 @media (prefers-reduced-motion:reduce){.telemetry::after,.finding.show,#results.visible{animation:none}}
 .feedback-card{margin-top:1.5rem}.feedback-form{display:grid;gap:1rem}.feedback-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.feedback-form label{display:grid;gap:.4rem;font-size:.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}.feedback-form input,.feedback-form textarea,.feedback-form select{width:100%;border:1px solid var(--border);border-radius:9px;background:rgba(15,23,42,.7);color:var(--text);padding:.75rem;font:inherit}.feedback-form textarea{min-height:100px;resize:vertical}.feedback-status{font-size:.8rem;color:#86efac;min-height:1.2em}@media(max-width:560px){.feedback-grid{grid-template-columns:1fr}}
@@ -231,6 +242,17 @@ h1{font-size:clamp(2.35rem,6vw,3.8rem);letter-spacing:-1.6px;background:linear-g
     <span class="beta-pill">Beta</span>
   </a>
   <div class="nav-right">
+    <div class="nav-menu">
+      <details><summary>Explore</summary><div class="menu-panel">
+        <a href="#scanCard">Run a scan</a><a href="#feedback">Share feedback</a>
+      </div></details>
+      <details><summary>Resources</summary><div class="menu-panel">
+        <a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Service</a><a href="#feedback">Contact / feedback</a>
+      </div></details>
+      <details><summary>About</summary><div class="menu-panel">
+        <a href="#how-it-works">How it works</a><a href="#safety">Safety limits</a>
+      </div></details>
+    </div>
     <span class="dot" id="dot"></span>
     <span class="dot-label" id="dotLabel">checking…</span>
   </div>
@@ -264,7 +286,7 @@ h1{font-size:clamp(2.35rem,6vw,3.8rem);letter-spacing:-1.6px;background:linear-g
 </section>
 
 <div class="wrap">
-  <div class="dashboard-intro">
+  <div class="dashboard-intro" id="how-it-works">
     <div><div class="dashboard-kicker">Launch readiness / workspace</div><div class="dashboard-title">Your pre-flight console</div></div>
     <div class="dashboard-note">Inspect a harmless sample first. Hands-Off never installs packages or executes repository code.</div>
   </div>
@@ -304,7 +326,7 @@ h1{font-size:clamp(2.35rem,6vw,3.8rem);letter-spacing:-1.6px;background:linear-g
     </div>
 
     <aside class="telemetry">
-      <div class="telemetry-head"><span class="telemetry-label">System posture</span><span class="live-pill">● API ONLINE</span></div>
+      <div class="telemetry-head" id="safety"><span class="telemetry-label">System posture</span><span class="live-pill">● API ONLINE</span></div>
       <div class="signal"><div class="signal-value">SAFE</div><div class="signal-caption">No repository code is executed during these checks.</div></div>
       <div class="telemetry-list">
         <div class="telemetry-row"><span>Analysis mode</span><strong>Static only</strong></div>
@@ -523,8 +545,10 @@ function countUp(el, target, duration = 600) {
 }
 
 function renderReport(report) {
+  latestReport = report;
   const s = report.summary;
-  const findings = report.findings || [];
+  const filter = document.getElementById('severityFilter')?.value || 'all';
+  const findings = (report.findings || []).filter(f => filter === 'all' || f.severity === filter);
   const sevMap = { critical:'c', high:'h', medium:'m', low:'l', info:'i' };
 
   const summary = `
@@ -539,8 +563,8 @@ function renderReport(report) {
   const findingsHtml = findings.length === 0
     ? `<div class="no-findings">
          <span class="nf-icon">✅</span>
-         <div class="nf-title">All clear!</div>
-         <p class="nf-sub">No issues found in the selected checks.</p>
+         <div class="nf-title">${filter === 'all' ? 'All clear!' : 'No matches'}</div>
+         <p class="nf-sub">${filter === 'all' ? 'No issues found in the selected checks.' : `No ${filter} findings in this report.`}</p>
        </div>`
     : `<div class="section-label">${findings.length} Finding${findings.length > 1 ? 's' : ''}</div>
        ${findings.map((f, i) => `
@@ -566,9 +590,19 @@ function renderReport(report) {
     <div class="card">
       <div class="card-label">Scan Report <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#334155">${report.scan_id.slice(0,8)}…</span></div>
       ${summary}
+      <div class="report-tools">
+        <span>${findings.length} finding${findings.length === 1 ? '' : 's'} shown</span>
+        <label>Filter <select id="severityFilter" onchange="renderReport(latestReport)">
+          <option value="all">All severities</option>
+          <option value="critical">Critical</option><option value="high">High</option>
+          <option value="medium">Medium</option><option value="low">Low</option><option value="info">Info</option>
+        </select></label>
+      </div>
       ${findingsHtml}
       ${lims}
     </div>`;
+  const filterControl = el.querySelector('#severityFilter');
+  if (filterControl) filterControl.value = filter;
   el.style.display = 'block';
   setTimeout(() => el.className = 'visible', 10);
 
@@ -577,6 +611,8 @@ function renderReport(report) {
   /* stagger findings in */
   setTimeout(() => el.querySelectorAll('.finding').forEach(f => f.classList.add('show')), 50);
 }
+
+let latestReport;
 
 function esc(s) {
   return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
